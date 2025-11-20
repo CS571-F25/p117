@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
 import './App.css'
+import { AuthProvider } from './contexts/AuthContext'
 import AppNavbar from './components/AppNavbar'
+import ProtectedRoute from './components/ProtectedRoute'
 import HomePage from './pages/HomePage'
 import NewPostPage from './pages/NewPostPage'
 import PostDetailsPage from './pages/PostDetailsPage'
 import AboutPage from './pages/AboutPage'
+import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 import { getUserId } from './utils/userId'
 
 // Sample initial data
@@ -81,27 +85,41 @@ function App() {
   }
 
   return (
-    <HashRouter>
-      <AppNavbar />
-      <Routes>
-        <Route 
-          path="/" 
-          element={<HomePage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
-        />
-        <Route 
-          path="/about" 
-          element={<AboutPage />} 
-        />
-        <Route 
-          path="/new" 
-          element={<NewPostPage onCreatePost={handleCreatePost} />} 
-        />
-        <Route 
-          path="/post/:id" 
-          element={<PostDetailsPage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
-        />
-      </Routes>
-    </HashRouter>
+    <AuthProvider>
+      <HashRouter>
+        <AppNavbar />
+        <Routes>
+          <Route 
+            path="/" 
+            element={<HomePage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
+          />
+          <Route 
+            path="/about" 
+            element={<AboutPage />} 
+          />
+          <Route 
+            path="/login" 
+            element={<LoginPage />} 
+          />
+          <Route 
+            path="/signup" 
+            element={<SignupPage />} 
+          />
+          <Route 
+            path="/new" 
+            element={
+              <ProtectedRoute>
+                <NewPostPage onCreatePost={handleCreatePost} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/post/:id" 
+            element={<PostDetailsPage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
+          />
+        </Routes>
+      </HashRouter>
+    </AuthProvider>
   )
 }
 
