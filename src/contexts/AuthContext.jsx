@@ -18,35 +18,44 @@ export function AuthProvider({ children }) {
 
   // Load auth state from localStorage on mount
   useEffect(() => {
-    const savedAuth = localStorage.getItem('grabgrub_auth')
-    if (savedAuth) {
-      try {
-        const authData = JSON.parse(savedAuth)
-        if (authData.user && authData.isLoggedIn) {
-          setCurrentUser(authData.user)
-          setIsLoggedIn(true)
-          setIsGuest(false)
-        } else if (authData.isGuest) {
-          setIsGuest(true)
-          setIsLoggedIn(false)
-          setCurrentUser(null)
+    try {
+      const savedAuth = localStorage.getItem('grabgrub_auth')
+      if (savedAuth) {
+        try {
+          const authData = JSON.parse(savedAuth)
+          if (authData.user && authData.isLoggedIn) {
+            setCurrentUser(authData.user)
+            setIsLoggedIn(true)
+            setIsGuest(false)
+          } else if (authData.isGuest) {
+            setIsGuest(true)
+            setIsLoggedIn(false)
+            setCurrentUser(null)
+          }
+        } catch (error) {
+          console.error('Error loading auth state:', error)
         }
-      } catch (error) {
-        console.error('Error loading auth state:', error)
       }
+    } catch (error) {
+      console.error('Error accessing localStorage:', error)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   // Save auth state to localStorage whenever it changes
   useEffect(() => {
     if (!loading) {
-      const authData = {
-        user: currentUser,
-        isLoggedIn,
-        isGuest
+      try {
+        const authData = {
+          user: currentUser,
+          isLoggedIn,
+          isGuest
+        }
+        localStorage.setItem('grabgrub_auth', JSON.stringify(authData))
+      } catch (error) {
+        console.error('Error saving auth state:', error)
       }
-      localStorage.setItem('grabgrub_auth', JSON.stringify(authData))
     }
   }, [currentUser, isLoggedIn, isGuest, loading])
 

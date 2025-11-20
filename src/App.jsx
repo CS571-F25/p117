@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
 import './App.css'
 import { AuthProvider } from './contexts/AuthContext'
+import ErrorBoundary from './components/ErrorBoundary'
 import AppNavbar from './components/AppNavbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import HomePage from './pages/HomePage'
@@ -85,10 +86,11 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <HashRouter basename="/p117">
-        <AppNavbar />
-        <Routes>
+    <ErrorBoundary>
+      <AuthProvider>
+        <HashRouter>
+          <AppNavbar />
+          <Routes>
           <Route 
             path="/" 
             element={<HomePage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
@@ -120,6 +122,7 @@ function App() {
         </Routes>
       </HashRouter>
     </AuthProvider>
+    </ErrorBoundary>
   )
 }
 
