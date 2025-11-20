@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
@@ -10,11 +9,7 @@ if (!rootElement) {
   document.body.innerHTML = '<div style="padding: 20px; font-family: Arial;">Error: Root element not found. Please check the HTML.</div>'
 } else {
   try {
-    createRoot(rootElement).render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    )
+    createRoot(rootElement).render(<App />)
   } catch (error) {
     console.error('Error rendering app:', error)
     rootElement.innerHTML = `
