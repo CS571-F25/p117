@@ -86,7 +86,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <HashRouter>
+      <HashRouter basename="/p117">
         <AppNavbar />
         <Routes>
           <Route 
