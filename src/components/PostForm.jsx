@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Form, Button, Alert, Row, Col } from 'react-bootstrap'
+import { calculateEndDateTime } from '../utils/timeUtils'
 
 function PostForm({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -164,9 +165,13 @@ function PostForm({ onSubmit }) {
     e.preventDefault()
     
     if (validate()) {
+      // Calculate end datetime for expiration checking
+      const endDateTime = calculateEndDateTime(formData.pickupDate, formData.endTime)
+      
       const submissionData = {
         ...formData,
-        pickupWindow: formatPickupWindow()
+        pickupWindow: formatPickupWindow(),
+        endDateTime: endDateTime ? endDateTime.toISOString() : null
       }
       // Call onSubmit first to create the post
       onSubmit(submissionData)
