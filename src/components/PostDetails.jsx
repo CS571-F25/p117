@@ -9,7 +9,7 @@ function PostDetails({ post, onDeletePost, onToggleTaken, currentUserId }) {
   const handleDelete = () => {
     if (onDeletePost && post) {
       onDeletePost(post.id)
-      navigate('/')
+      navigate('/home')
     }
   }
 
@@ -64,7 +64,7 @@ function PostDetails({ post, onDeletePost, onToggleTaken, currentUserId }) {
     return (
       <div className="text-center py-5">
         <p className="text-muted">Post not found</p>
-        <Button as={Link} to="/" variant="primary">
+        <Button as={Link} to="/home" variant="primary">
           Back to Home
         </Button>
       </div>
@@ -109,7 +109,7 @@ function PostDetails({ post, onDeletePost, onToggleTaken, currentUserId }) {
       )}
       <Card.Body>
         <div className="mb-3 d-flex justify-content-between align-items-center">
-          <Button as={Link} to="/" variant="outline-secondary" size="sm">
+          <Button as={Link} to="/home" variant="outline-secondary" size="sm">
             ← Back to Home
           </Button>
           <div className="d-flex gap-2">

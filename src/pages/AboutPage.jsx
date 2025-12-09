@@ -83,7 +83,7 @@ function AboutPage() {
       </Card>
 
       <div className="text-center mt-5">
-        <Link to="/" className="btn btn-primary btn-lg me-3">
+        <Link to="/home" className="btn btn-primary btn-lg me-3">
           Browse Food Listings
         </Link>
         <Link to="/new" className="btn btn-outline-primary btn-lg">

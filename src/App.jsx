@@ -254,6 +254,10 @@ function AppContent() {
       <Routes>
         <Route 
           path="/" 
+          element={<AboutPage />} 
+        />
+        <Route 
+          path="/home" 
           element={<HomePage posts={activePosts} onDeletePost={handleDeletePost} onToggleTaken={handleToggleTaken} currentUserId={currentUserId} />} 
         />
         <Route 

@@ -16,7 +16,7 @@ function LoginPage() {
 
     const result = login(email, password)
     if (result.success) {
-      navigate('/')
+      navigate('/home')
     } else {
       setError(result.error || 'Invalid email or password')
     }
@@ -24,7 +24,7 @@ function LoginPage() {
 
   const handleGuestMode = () => {
     continueAsGuest()
-    navigate('/')
+    navigate('/home')
   }
 
   return (

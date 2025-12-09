@@ -12,7 +12,7 @@ function NewPostPage({ onCreatePost }) {
       if (success !== false) {
         // Navigate to home page after a brief delay to ensure state update
         setTimeout(() => {
-          navigate('/')
+          navigate('/home')
         }, 50)
       }
     } else {

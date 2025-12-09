@@ -35,7 +35,7 @@ function SignupPage() {
 
     const result = signup(name, email, password)
     if (result.success) {
-      navigate('/')
+      navigate('/home')
     } else {
       setError(result.error || 'Signup failed. Please try again.')
     }

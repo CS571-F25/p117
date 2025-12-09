@@ -8,7 +8,7 @@ function AppNavbar() {
 
   const handleLogout = () => {
     logout()
-    navigate('/')
+    navigate('/home')
   }
 
   return (
@@ -18,7 +18,7 @@ function AppNavbar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" aria-label="Toggle navigation" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/" style={{ color: '#FFFFFF' }}>Home</Nav.Link>
+            <Nav.Link as={Link} to="/home" style={{ color: '#FFFFFF' }}>Home</Nav.Link>
             <Nav.Link as={Link} to="/deals" style={{ color: '#FFFFFF' }}>Deals</Nav.Link>
           </Nav>
           <Nav>
