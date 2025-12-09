@@ -1,19 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
 import './App.css'
-import { AuthProvider } from './contexts/AuthContext'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import AppNavbar from './components/AppNavbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import HomePage from './pages/HomePage'
 import NewPostPage from './pages/NewPostPage'
 import PostDetailsPage from './pages/PostDetailsPage'
+import DealsPage from './pages/DealsPage'
+import NewDealPage from './pages/NewDealPage'
+import DealDetailsPage from './pages/DealDetailsPage'
 import AboutPage from './pages/AboutPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
-import { getUserId } from './utils/userId'
 
-// Sample initial data
+// Sample initial data - only first post as example
 const initialPosts = [
   {
     id: 1,
@@ -21,62 +23,117 @@ const initialPosts = [
     location: 'Gordon Commons, Room 205',
     pickupWindow: 'Today 2pm - 5pm',
     note: 'Half a large pepperoni pizza, still warm! Perfect for a quick lunch. Please come pick it up.'
-  },
-  {
-    id: 2,
-    title: 'Leftover Chinese Food',
-    location: 'Lakeshore Dorms, Building A',
-    pickupWindow: 'Tomorrow 10am - 12pm',
-    note: 'Kung Pao chicken and fried rice. Too much food for one person. Still good!'
-  },
-  {
-    id: 3,
-    title: 'Sandwiches & Wraps',
-    location: 'Student Union, 2nd Floor',
-    pickupWindow: 'Today 4pm - 6pm',
-    note: 'Assorted sandwiches from a catering event. All wrapped and fresh. Vegetarian options available.'
-  },
-  {
-    id: 4,
-    title: 'Fresh Baked Cookies',
-    location: 'Engineering Building, Room 301',
-    pickupWindow: 'Today 1pm - 3pm',
-    note: 'Homemade chocolate chip cookies. Made too many! Come grab some while they last.'
-  },
-  {
-    id: 5,
-    title: 'Pasta & Salad',
-    location: 'Gordon Commons, Main Dining',
-    pickupWindow: 'Today 6pm - 8pm',
-    note: 'Leftover pasta with marinara sauce and a fresh garden salad. Great for dinner!'
-  },
-  {
-    id: 6,
-    title: 'Bagels & Cream Cheese',
-    location: 'Library, Ground Floor',
-    pickupWindow: 'Tomorrow 8am - 10am',
-    note: 'Assorted bagels with cream cheese packets. Perfect for breakfast!'
   }
 ]
 
-function App() {
-  const [posts, setPosts] = useState(initialPosts)
-  const [nextId, setNextId] = useState(7)
-  const currentUserId = getUserId()
+// No initial deals - users will create their own
+const initialDeals = []
+
+function AppContent() {
+  const { currentUser, isLoggedIn } = useAuth()
+  
+  // Load posts from localStorage or use initial posts
+  const loadPosts = () => {
+    try {
+      const savedPosts = localStorage.getItem('grabgrub_posts')
+      if (savedPosts) {
+        const parsed = JSON.parse(savedPosts)
+        if (parsed.length > 0) {
+          return parsed
+        }
+      }
+    } catch (error) {
+      console.error('Error loading posts:', error)
+    }
+    return initialPosts
+  }
+
+  // Load deals from localStorage or use initial deals
+  const loadDeals = () => {
+    try {
+      const savedDeals = localStorage.getItem('grabgrub_deals')
+      if (savedDeals) {
+        const parsed = JSON.parse(savedDeals)
+        if (parsed.length > 0) {
+          return parsed
+        }
+      }
+    } catch (error) {
+      console.error('Error loading deals:', error)
+    }
+    return initialDeals
+  }
+
+  const loadedPosts = loadPosts()
+  const loadedDeals = loadDeals()
+  
+  const [posts, setPosts] = useState(loadedPosts)
+  const [deals, setDeals] = useState(loadedDeals)
+  
+  const [nextPostId, setNextPostId] = useState(() => {
+    // Get the highest ID from loaded posts to set nextId
+    if (loadedPosts.length > 0) {
+      return Math.max(...loadedPosts.map(p => p.id)) + 1
+    }
+    return 2
+  })
+
+  const [nextDealId, setNextDealId] = useState(() => {
+    // Get the highest ID from loaded deals to set nextId
+    if (loadedDeals.length > 0) {
+      return Math.max(...loadedDeals.map(d => d.id)) + 1
+    }
+    return 1
+  })
+
+  // Save posts to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('grabgrub_posts', JSON.stringify(posts))
+    } catch (error) {
+      console.error('Error saving posts:', error)
+    }
+  }, [posts])
+
+  // Save deals to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('grabgrub_deals', JSON.stringify(deals))
+    } catch (error) {
+      console.error('Error saving deals:', error)
+    }
+  }, [deals])
 
   const handleCreatePost = (formData) => {
+    // Use logged-in user's ID, not persistent userId
+    const creatorId = isLoggedIn && currentUser ? currentUser.id : null
+    
+    if (!creatorId) {
+      alert('You must be logged in to create a post.')
+      return
+    }
+
     const newPost = {
-      id: nextId,
+      id: nextPostId,
       ...formData,
-      creatorId: currentUserId
+      creatorId: creatorId
     }
     setPosts(prevPosts => [newPost, ...prevPosts])
-    setNextId(prev => prev + 1)
+    setNextPostId(prev => prev + 1)
+    
+    // Return success to indicate post was created
+    return true
   }
 
   const handleDeletePost = (postId) => {
+    // Only allow deletion if user is logged in
+    if (!isLoggedIn || !currentUser) {
+      alert('You must be logged in to delete posts.')
+      return
+    }
+
     const post = posts.find(p => p.id === postId)
-    if (post && post.creatorId === currentUserId) {
+    if (post && post.creatorId === currentUser.id) {
       if (window.confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
         setPosts(prevPosts => prevPosts.filter(post => post.id !== postId))
       }
@@ -85,43 +142,103 @@ function App() {
     }
   }
 
+  const handleCreateDeal = (formData) => {
+    // Use logged-in user's ID, not persistent userId
+    const creatorId = isLoggedIn && currentUser ? currentUser.id : null
+    
+    if (!creatorId) {
+      alert('You must be logged in to create a deal.')
+      return
+    }
+
+    const newDeal = {
+      id: nextDealId,
+      ...formData,
+      creatorId: creatorId
+    }
+    setDeals(prevDeals => [newDeal, ...prevDeals])
+    setNextDealId(prev => prev + 1)
+  }
+
+  const handleDeleteDeal = (dealId) => {
+    // Only allow deletion if user is logged in
+    if (!isLoggedIn || !currentUser) {
+      alert('You must be logged in to delete deals.')
+      return
+    }
+
+    const deal = deals.find(d => d.id === dealId)
+    if (deal && deal.creatorId === currentUser.id) {
+      if (window.confirm('Are you sure you want to delete this deal? This action cannot be undone.')) {
+        setDeals(prevDeals => prevDeals.filter(deal => deal.id !== dealId))
+      }
+    } else {
+      alert('You can only delete deals that you created.')
+    }
+  }
+
+  // Get current user ID for checking ownership (only if logged in)
+  const currentUserId = isLoggedIn && currentUser ? currentUser.id : null
+
+  return (
+    <HashRouter>
+      <AppNavbar />
+      <Routes>
+        <Route 
+          path="/" 
+          element={<HomePage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
+        />
+        <Route 
+          path="/about" 
+          element={<AboutPage />} 
+        />
+        <Route 
+          path="/login" 
+          element={<LoginPage />} 
+        />
+        <Route 
+          path="/signup" 
+          element={<SignupPage />} 
+        />
+        <Route 
+          path="/new" 
+          element={
+            <ProtectedRoute>
+              <NewPostPage onCreatePost={handleCreatePost} />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/post/:id" 
+          element={<PostDetailsPage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
+        />
+        <Route 
+          path="/deals" 
+          element={<DealsPage deals={deals} onDeleteDeal={handleDeleteDeal} currentUserId={currentUserId} />} 
+        />
+        <Route 
+          path="/deals/new" 
+          element={
+            <ProtectedRoute>
+              <NewDealPage onCreateDeal={handleCreateDeal} />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/deal/:id" 
+          element={<DealDetailsPage deals={deals} onDeleteDeal={handleDeleteDeal} currentUserId={currentUserId} />} 
+        />
+      </Routes>
+    </HashRouter>
+  )
+}
+
+function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <HashRouter>
-          <AppNavbar />
-          <Routes>
-          <Route 
-            path="/" 
-            element={<HomePage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
-          />
-          <Route 
-            path="/about" 
-            element={<AboutPage />} 
-          />
-          <Route 
-            path="/login" 
-            element={<LoginPage />} 
-          />
-          <Route 
-            path="/signup" 
-            element={<SignupPage />} 
-          />
-          <Route 
-            path="/new" 
-            element={
-              <ProtectedRoute>
-                <NewPostPage onCreatePost={handleCreatePost} />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/post/:id" 
-            element={<PostDetailsPage posts={posts} onDeletePost={handleDeletePost} currentUserId={currentUserId} />} 
-          />
-        </Routes>
-      </HashRouter>
-    </AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </ErrorBoundary>
   )
 }

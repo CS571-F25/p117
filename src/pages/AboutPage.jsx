@@ -25,7 +25,7 @@ function AboutPage() {
           <Card className="h-100 shadow-sm border-primary">
             <Card.Body>
               <div className="text-center mb-3" style={{ fontSize: '3rem' }}>📤</div>
-              <h4 className="text-center mb-3">Share Your Food</h4>
+              <h3 className="text-center mb-3">Share Your Food</h3>
               <p className="text-center text-muted">
                 Have leftovers? Create a post with photos, location, and pickup details. 
                 Help reduce waste while helping others!
@@ -37,7 +37,7 @@ function AboutPage() {
           <Card className="h-100 shadow-sm border-success">
             <Card.Body>
               <div className="text-center mb-3" style={{ fontSize: '3rem' }}>📥</div>
-              <h4 className="text-center mb-3">Grab Fresh Food</h4>
+              <h3 className="text-center mb-3">Grab Fresh Food</h3>
               <p className="text-center text-muted">
                 Browse available food listings near you. Search by location, 
                 filter by type, and find free food in your area!

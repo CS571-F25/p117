@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { Form, Button, Alert, Row, Col } from 'react-bootstrap'
 
-function PostForm({ onSubmit }) {
+function DealForm({ onSubmit }) {
   const [formData, setFormData] = useState({
     title: '',
+    store: '',
     location: '',
-    pickupDate: '',
-    startTime: '',
-    endTime: '',
-    note: '',
+    description: '',
+    discount: '',
+    expirationDate: '',
     images: []
   })
   const [imagePreviews, setImagePreviews] = useState([])
@@ -110,54 +110,31 @@ function PostForm({ onSubmit }) {
     if (!formData.location.trim()) {
       newErrors.location = 'Location is required'
     }
-    if (!formData.pickupDate.trim()) {
-      newErrors.pickupDate = 'Pickup date is required'
-    }
-    if (!formData.startTime.trim()) {
-      newErrors.startTime = 'Start time is required'
-    }
-    if (!formData.endTime.trim()) {
-      newErrors.endTime = 'End time is required'
-    }
-    if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
-      newErrors.endTime = 'End time must be after start time'
-    }
-    if (!formData.note.trim()) {
-      newErrors.note = 'Note is required'
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required'
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const formatPickupWindow = () => {
-    if (!formData.pickupDate) return ''
+  const formatExpirationDate = () => {
+    if (!formData.expirationDate) return ''
     
-    const date = new Date(formData.pickupDate + 'T00:00:00')
+    const date = new Date(formData.expirationDate + 'T00:00:00')
     const today = new Date()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    today.setHours(0, 0, 0, 0)
     
-    let dateStr
     if (date.toDateString() === today.toDateString()) {
-      dateStr = 'Today'
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      dateStr = 'Tomorrow'
-    } else {
-      dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+      return 'Today'
     }
     
-    // Format time (convert 24h to 12h if needed, or keep as is)
-    const formatTime = (time) => {
-      if (!time) return ''
-      const [hours, minutes] = time.split(':')
-      const hour = parseInt(hours)
-      const ampm = hour >= 12 ? 'pm' : 'am'
-      const hour12 = hour % 12 || 12
-      return `${hour12}:${minutes} ${ampm}`
-    }
-    
-    return `${dateStr} ${formatTime(formData.startTime)} - ${formatTime(formData.endTime)}`
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'short', 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    })
   }
 
   const handleSubmit = (e) => {
@@ -166,19 +143,17 @@ function PostForm({ onSubmit }) {
     if (validate()) {
       const submissionData = {
         ...formData,
-        pickupWindow: formatPickupWindow()
+        expirationDate: formData.expirationDate ? formatExpirationDate() : ''
       }
-      // Call onSubmit first to create the post
       onSubmit(submissionData)
-      // Then show success and clear form
       setShowSuccess(true)
       setFormData({
         title: '',
+        store: '',
         location: '',
-        pickupDate: '',
-        startTime: '',
-        endTime: '',
-        note: '',
+        description: '',
+        discount: '',
+        expirationDate: '',
         images: []
       })
       setImagePreviews([])
@@ -190,23 +165,34 @@ function PostForm({ onSubmit }) {
     <Form onSubmit={handleSubmit} className="mb-4">
       {showSuccess && (
         <Alert variant="success" dismissible onClose={() => setShowSuccess(false)}>
-          Post created successfully!
+          Deal created successfully!
         </Alert>
       )}
 
       <Form.Group className="mb-3">
-        <Form.Label>Title *</Form.Label>
+        <Form.Label>Deal Title *</Form.Label>
         <Form.Control
           type="text"
           name="title"
           value={formData.title}
           onChange={handleChange}
           isInvalid={!!errors.title}
-          placeholder="e.g., Fresh Pizza Slices"
+          placeholder="e.g., 50% Off Pizza"
         />
         <Form.Control.Feedback type="invalid">
           {errors.title}
         </Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Store/Business Name (Optional)</Form.Label>
+        <Form.Control
+          type="text"
+          name="store"
+          value={formData.store}
+          onChange={handleChange}
+          placeholder="e.g., Domino's Pizza"
+        />
       </Form.Group>
 
       <Form.Group className="mb-3">
@@ -217,7 +203,7 @@ function PostForm({ onSubmit }) {
           value={formData.location}
           onChange={handleChange}
           isInvalid={!!errors.location}
-          placeholder="e.g., Gordon Commons, Room 205"
+          placeholder="e.g., State Street, Madison, WI"
         />
         <Form.Control.Feedback type="invalid">
           {errors.location}
@@ -225,69 +211,48 @@ function PostForm({ onSubmit }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Pickup Window *</Form.Label>
-        <Row>
-          <Col md={4}>
-            <Form.Label className="small">Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="pickupDate"
-              value={formData.pickupDate}
-              onChange={handleChange}
-              isInvalid={!!errors.pickupDate}
-              min={new Date().toISOString().split('T')[0]}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.pickupDate}
-            </Form.Control.Feedback>
-          </Col>
-          <Col md={4}>
-            <Form.Label className="small">Start Time</Form.Label>
-            <Form.Control
-              type="time"
-              name="startTime"
-              value={formData.startTime}
-              onChange={handleChange}
-              isInvalid={!!errors.startTime}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.startTime}
-            </Form.Control.Feedback>
-          </Col>
-          <Col md={4}>
-            <Form.Label className="small">End Time</Form.Label>
-            <Form.Control
-              type="time"
-              name="endTime"
-              value={formData.endTime}
-              onChange={handleChange}
-              isInvalid={!!errors.endTime}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.endTime}
-            </Form.Control.Feedback>
-          </Col>
-        </Row>
+        <Form.Label>Discount/Offer Details (Optional)</Form.Label>
+        <Form.Control
+          type="text"
+          name="discount"
+          value={formData.discount}
+          onChange={handleChange}
+          placeholder="e.g., 50% off, Buy 1 Get 1 Free, $5 off orders over $20"
+        />
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Note *</Form.Label>
+        <Form.Label>Expiration Date (Optional)</Form.Label>
+        <Form.Control
+          type="date"
+          name="expirationDate"
+          value={formData.expirationDate}
+          onChange={handleChange}
+          min={new Date().toISOString().split('T')[0]}
+        />
+        <Form.Text className="text-muted">
+          When does this deal expire?
+        </Form.Text>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Description *</Form.Label>
         <Form.Control
           as="textarea"
           rows={4}
-          name="note"
-          value={formData.note}
+          name="description"
+          value={formData.description}
           onChange={handleChange}
-          isInvalid={!!errors.note}
-          placeholder="Describe the food, quantity, dietary info, etc."
+          isInvalid={!!errors.description}
+          placeholder="Provide details about the deal, terms and conditions, how to redeem, etc."
         />
         <Form.Control.Feedback type="invalid">
-          {errors.note}
+          {errors.description}
         </Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Food Photos (Optional)</Form.Label>
+        <Form.Label>Deal Photos (Optional)</Form.Label>
         <Form.Control
           type="file"
           accept="image/*"
@@ -296,7 +261,7 @@ function PostForm({ onSubmit }) {
           isInvalid={!!errors.images}
         />
         <Form.Text className="text-muted">
-          Upload photos of your food (max 5MB each, JPG/PNG/GIF). You can select multiple images.
+          Upload photos of the deal, flyer, or store (max 5MB each, JPG/PNG/GIF). You can select multiple images.
         </Form.Text>
         <Form.Control.Feedback type="invalid">
           {errors.images}
@@ -335,11 +300,11 @@ function PostForm({ onSubmit }) {
       </Form.Group>
 
       <Button variant="primary" type="submit" size="lg">
-        Create Post
+        Create Deal
       </Button>
     </Form>
   )
 }
 
-export default PostForm
+export default DealForm
 

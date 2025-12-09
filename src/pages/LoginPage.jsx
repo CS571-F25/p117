@@ -31,7 +31,7 @@ function LoginPage() {
     <Container className="py-5" style={{ maxWidth: '500px' }}>
       <Card className="shadow">
         <Card.Body className="p-4">
-          <h2 className="text-center mb-4">Login to GrabGrub</h2>
+          <h1 className="text-center mb-4">Login to GrabGrub</h1>
 
           {error && (
             <Alert variant="danger" dismissible onClose={() => setError('')}>

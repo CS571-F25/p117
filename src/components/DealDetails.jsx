@@ -1,34 +1,34 @@
 import { Card, Badge, Button, Row, Col } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router'
 
-function PostDetails({ post, onDeletePost, currentUserId }) {
+function DealDetails({ deal, onDeleteDeal, currentUserId }) {
   const navigate = useNavigate()
 
   const handleDelete = () => {
-    if (onDeletePost && post) {
-      onDeletePost(post.id)
-      navigate('/')
+    if (onDeleteDeal && deal) {
+      onDeleteDeal(deal.id)
+      navigate('/deals')
     }
   }
 
-  // Only allow delete if user is logged in AND they created the post
-  const canDelete = currentUserId && post && post.creatorId && post.creatorId === currentUserId
+  // Only allow delete if user is logged in AND they created the deal
+  const canDelete = currentUserId && deal && deal.creatorId && deal.creatorId === currentUserId
 
-  if (!post) {
+  if (!deal) {
     return (
       <div className="text-center py-5">
-        <p className="text-muted">Post not found</p>
-        <Button as={Link} to="/" variant="primary">
-          Back to Home
+        <p className="text-muted">Deal not found</p>
+        <Button as={Link} to="/deals" variant="primary">
+          Back to Deals
         </Button>
       </div>
     )
   }
 
   // Get images array or single image
-  const images = post.images && post.images.length > 0 
-    ? post.images 
-    : (post.image ? [post.image] : [])
+  const images = deal.images && deal.images.length > 0 
+    ? deal.images 
+    : (deal.image ? [deal.image] : [])
 
   return (
     <Card className="shadow">
@@ -37,7 +37,7 @@ function PostDetails({ post, onDeletePost, currentUserId }) {
           {images.length === 1 ? (
             <img 
               src={images[0]} 
-              alt={post.title}
+              alt={deal.title}
               style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '8px' }}
             />
           ) : (
@@ -46,7 +46,7 @@ function PostDetails({ post, onDeletePost, currentUserId }) {
                 <Col key={index} xs={12} sm={6} md={4}>
                   <img 
                     src={img} 
-                    alt={`${post.title} - ${index + 1}`}
+                    alt={`${deal.title} - ${index + 1}`}
                     style={{ 
                       width: '100%', 
                       height: '250px', 
@@ -63,35 +63,52 @@ function PostDetails({ post, onDeletePost, currentUserId }) {
       )}
       <Card.Body>
         <div className="mb-3 d-flex justify-content-between align-items-center">
-          <Button as={Link} to="/" variant="outline-secondary" size="sm">
-            ← Back to Home
+          <Button as={Link} to="/deals" variant="outline-secondary" size="sm">
+            ← Back to Deals
           </Button>
-          {canDelete && onDeletePost && (
+          {canDelete && onDeleteDeal && (
             <Button variant="danger" onClick={handleDelete} size="sm">
-              🗑️ Delete Post
+              🗑️ Delete Deal
             </Button>
           )}
         </div>
         
-        <Card.Title className="mb-3">{post.title}</Card.Title>
+        <Card.Title className="mb-3">{deal.title}</Card.Title>
+        
+        {deal.store && (
+          <div className="mb-3">
+            <Badge bg="primary" className="me-2">Store</Badge>
+            <p className="d-inline">{deal.store}</p>
+          </div>
+        )}
         
         <div className="mb-3">
           <Badge bg="info" className="me-2">Location</Badge>
-          <p className="d-inline">{post.location}</p>
+          <p className="d-inline">{deal.location}</p>
         </div>
         
-        <div className="mb-3">
-          <Badge bg="warning" className="me-2">Pickup Window</Badge>
-          <p className="d-inline">{post.pickupWindow}</p>
-        </div>
+        {deal.discount && (
+          <div className="mb-3">
+            <Badge bg="success" className="me-2">Discount</Badge>
+            <p className="d-inline">{deal.discount}</p>
+          </div>
+        )}
+        
+        {deal.expirationDate && (
+          <div className="mb-3">
+            <Badge bg="warning" className="me-2">Expires</Badge>
+            <p className="d-inline">{deal.expirationDate}</p>
+          </div>
+        )}
         
         <div className="mb-3">
           <Badge bg="secondary" className="me-2">Details</Badge>
-          <p className="mt-2">{post.note}</p>
+          <p className="mt-2">{deal.description}</p>
         </div>
       </Card.Body>
     </Card>
   )
 }
 
-export default PostDetails
+export default DealDetails
+
