@@ -46,15 +46,20 @@ function DealsPage({ deals = [], onDeleteDeal, currentUserId }) {
         Discover great food deals and discounts shared by the community!
       </p>
       
-      <InputGroup className="mb-4">
-        <InputGroup.Text>🔍</InputGroup.Text>
-        <Form.Control
-          type="text"
-          placeholder="Search by title, store, location, or description..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </InputGroup>
+      <Form.Group className="mb-4">
+        <Form.Label htmlFor="search-deals" className="visually-hidden">Search deals</Form.Label>
+        <InputGroup>
+          <InputGroup.Text>🔍</InputGroup.Text>
+          <Form.Control
+            id="search-deals"
+            type="text"
+            placeholder="Search by title, store, location, or description..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Search deals by title, store, location, or description"
+          />
+        </InputGroup>
+      </Form.Group>
 
       <DealList deals={filteredDeals} onDeleteDeal={onDeleteDeal} currentUserId={currentUserId} />
     </Container>

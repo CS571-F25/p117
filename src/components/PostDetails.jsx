@@ -114,8 +114,8 @@ function PostDetails({ post, onDeletePost, onToggleTaken, currentUserId }) {
           </Button>
           <div className="d-flex gap-2">
             {canDelete && onDeletePost && (
-              <Button variant="danger" onClick={handleDelete} size="sm">
-                🗑️ Delete Post
+              <Button variant="danger" onClick={handleDelete} size="sm" aria-label="Delete Post">
+                <span aria-hidden="true">🗑️</span> Delete Post
               </Button>
             )}
             {isCreator && onToggleTaken && (
@@ -131,7 +131,7 @@ function PostDetails({ post, onDeletePost, onToggleTaken, currentUserId }) {
         </div>
         
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <Card.Title className="mb-0">{post.title}</Card.Title>
+          <Card.Title as="h2" className="mb-0">{post.title}</Card.Title>
           {post.isTaken && (
             <Badge bg="secondary">Taken</Badge>
           )}
@@ -169,17 +169,19 @@ function PostDetails({ post, onDeletePost, onToggleTaken, currentUserId }) {
             <Button 
               onClick={handleContact}
               className="w-100 mb-2"
-              style={{ backgroundColor: '#20c997', borderColor: '#20c997', color: '#FFFFFF' }}
+              aria-label="Contact Creator"
+              style={{ backgroundColor: '#0e7490', borderColor: '#0e7490', color: '#FFFFFF' }}
             >
-              📧 Contact Creator
+              <span aria-hidden="true">📧</span> Contact Creator
             </Button>
             {post.endDateTime && (
               <Button 
                 onClick={handleRemindMe}
                 className="w-100"
-                style={{ backgroundColor: '#FF8C00', borderColor: '#FF8C00', color: '#FFFFFF' }}
+                aria-label="Set Reminder"
+                style={{ backgroundColor: '#c2410c', borderColor: '#c2410c', color: '#FFFFFF' }}
               >
-                ⏰ Set Reminder
+                <span aria-hidden="true">⏰</span> Set Reminder
               </Button>
             )}
           </div>

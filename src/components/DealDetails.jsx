@@ -67,13 +67,13 @@ function DealDetails({ deal, onDeleteDeal, currentUserId }) {
             ← Back to Deals
           </Button>
           {canDelete && onDeleteDeal && (
-            <Button variant="danger" onClick={handleDelete} size="sm">
-              🗑️ Delete Deal
+            <Button variant="danger" onClick={handleDelete} size="sm" aria-label="Delete Deal">
+              <span aria-hidden="true">🗑️</span> Delete Deal
             </Button>
           )}
         </div>
         
-        <Card.Title className="mb-3">{deal.title}</Card.Title>
+        <Card.Title as="h2" className="mb-3">{deal.title}</Card.Title>
         
         {deal.store && (
           <div className="mb-3">

@@ -8,6 +8,7 @@ function DealDetailsPage({ deals, onDeleteDeal, currentUserId }) {
 
   return (
     <Container className="py-4" style={{ maxWidth: '900px' }}>
+      <h1 className="visually-hidden">Deal Details</h1>
       <DealDetails deal={deal} onDeleteDeal={onDeleteDeal} currentUserId={currentUserId} />
     </Container>
   )

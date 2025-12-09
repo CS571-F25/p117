@@ -125,11 +125,12 @@ function PostCard({ post, onDeletePost, onToggleTaken, currentUserId }) {
               <Button 
                 variant="danger" 
                 onClick={handleDelete} 
-                title="Delete Post" 
+                title="Delete Post"
+                aria-label="Delete Post"
                 size="sm"
                 style={{ minWidth: '40px' }}
               >
-                🗑️
+                <span aria-hidden="true">🗑️</span>
               </Button>
             )}
           </div>
@@ -156,9 +157,10 @@ function PostCard({ post, onDeletePost, onToggleTaken, currentUserId }) {
                 size="sm"
                 onClick={handleContact}
                 title="Contact creator"
-                style={{ backgroundColor: '#20c997', borderColor: '#20c997', color: '#FFFFFF' }}
+                aria-label="Contact creator"
+                style={{ backgroundColor: '#0e7490', borderColor: '#0e7490', color: '#FFFFFF' }}
               >
-                📧 Contact
+                <span aria-hidden="true">📧</span> Contact
               </Button>
               {post.endDateTime && (
                 <Button 
@@ -166,9 +168,10 @@ function PostCard({ post, onDeletePost, onToggleTaken, currentUserId }) {
                   size="sm"
                   onClick={handleRemindMe}
                   title="Set reminder"
-                  style={{ backgroundColor: '#FF8C00', borderColor: '#FF8C00', color: '#FFFFFF' }}
+                  aria-label="Set reminder"
+                  style={{ backgroundColor: '#c2410c', borderColor: '#c2410c', color: '#FFFFFF' }}
                 >
-                  ⏰ Set Reminder
+                  <span aria-hidden="true">⏰</span> Set Reminder
                 </Button>
               )}
             </div>

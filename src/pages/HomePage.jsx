@@ -82,15 +82,20 @@ function HomePage({ posts = [], onDeletePost, onToggleTaken, currentUserId }) {
       <Row className="mb-4 g-3">
         {/* Search Bar */}
         <Col xs={12} md={6}>
-          <InputGroup>
-            <InputGroup.Text>🔍</InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder="Search by title, location, or description..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </InputGroup>
+          <Form.Group>
+            <Form.Label htmlFor="search-posts" className="visually-hidden">Search food listings</Form.Label>
+            <InputGroup>
+              <InputGroup.Text>🔍</InputGroup.Text>
+              <Form.Control
+                id="search-posts"
+                type="text"
+                placeholder="Search by title, location, or description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search food listings by title, location, or description"
+              />
+            </InputGroup>
+          </Form.Group>
         </Col>
 
         {/* Filters */}
@@ -98,8 +103,8 @@ function HomePage({ posts = [], onDeletePost, onToggleTaken, currentUserId }) {
           <div className="d-flex gap-2 flex-wrap">
             {/* Time Filter Dropdown */}
             <Dropdown>
-              <Dropdown.Toggle variant="outline-secondary" size="sm" className="d-flex align-items-center">
-                <span className="me-1">⏰</span>
+              <Dropdown.Toggle variant="outline-secondary" size="sm" className="d-flex align-items-center" aria-label="Filter by time">
+                <span className="me-1" aria-hidden="true">⏰</span>
                 {timeFilter === 'all' ? 'All Time' : timeFilter === 'expiring-soon' ? 'Expiring Soon' : 'Today'}
               </Dropdown.Toggle>
               <Dropdown.Menu>
@@ -127,8 +132,8 @@ function HomePage({ posts = [], onDeletePost, onToggleTaken, currentUserId }) {
             {/* Location Filter Dropdown */}
             {locations.length > 0 && (
               <Dropdown>
-                <Dropdown.Toggle variant="outline-secondary" size="sm" className="d-flex align-items-center">
-                  <span className="me-1">📍</span>
+                <Dropdown.Toggle variant="outline-secondary" size="sm" className="d-flex align-items-center" aria-label="Filter by location">
+                  <span className="me-1" aria-hidden="true">📍</span>
                   {locationFilter === 'all' ? 'All Locations' : locationFilter}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>

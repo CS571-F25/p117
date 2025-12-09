@@ -53,8 +53,8 @@ function DealCard({ deal, onDeleteDeal, currentUserId }) {
             View Details
           </Button>
           {canDelete && onDeleteDeal && (
-            <Button variant="danger" onClick={handleDelete} title="Delete Deal" style={{ width: '50px' }}>
-              🗑️
+            <Button variant="danger" onClick={handleDelete} title="Delete Deal" aria-label="Delete Deal" style={{ width: '50px' }}>
+              <span aria-hidden="true">🗑️</span>
             </Button>
           )}
         </ButtonGroup>

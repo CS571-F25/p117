@@ -8,6 +8,7 @@ function PostDetailsPage({ posts, onDeletePost, onToggleTaken, currentUserId }) 
 
   return (
     <Container className="py-4" style={{ maxWidth: '800px' }}>
+      <h1 className="visually-hidden">Post Details</h1>
       <PostDetails post={post} onDeletePost={onDeletePost} onToggleTaken={onToggleTaken} currentUserId={currentUserId} />
     </Container>
   )
